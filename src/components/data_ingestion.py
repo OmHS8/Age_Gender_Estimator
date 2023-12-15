@@ -1,5 +1,7 @@
 import os
 import sys
+from src.components.data_transformation import DataTransformation
+from src.components.model_trainer import ModelTrainer
 from src.exception import CustomException
 from src.logger import logging
 import pandas as pd
@@ -31,12 +33,15 @@ class DataIngestion:
             test_set.to_csv(self.ingestion_config.test_data_path, index=False, header=True)
             logging.info("Ingestion of data is completed")
             return (
-                self.ingestion_config.train_data_path,
-                self.ingestion_config.test_data_path
+                self.ingestion_config.raw_data_path
             )
         except Exception as e:
             raise CustomException(e, sys)
 
 if __name__ == '__main__':
     obj = DataIngestion()
-    obj.initiate_data_ingestion()
+    data_path = obj.initiate_data_ingestion()
+    data_transformation = DataTransformation()
+    data = data_transformation.initiate_data_transformation(data_path)
+    model_trainer = ModelTrainer()
+    model_trainer.initiate_model_trainer(data)
