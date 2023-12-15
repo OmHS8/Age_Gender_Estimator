@@ -9,11 +9,12 @@ from tensorflow.keras.models import model_from_json
 def save_model(file_path, model):     
     try:
         model_json = model.to_json()
-        dir_path = os.path.dirname(file_path)
+        file_path_json = "{}.json".format(file_path)
+        dir_path = os.path.dirname(file_path_json)
         os.makedirs(dir_path, exist_ok=True)
-        with open(file_path, "w") as json_file:
+        with open(file_path_json, "w") as json_file:
             json_file.write(model_json)
-        model.save_weights("{}_model.h5".format(file_path))
+        model.save_weights("{}.h5".format(file_path))
 
     except Exception as e:
         raise CustomException(e, sys)

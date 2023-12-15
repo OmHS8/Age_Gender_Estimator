@@ -8,8 +8,8 @@ from src.logger import logging
 
 @dataclass
 class ModelTrainerConfig:
-    gender_trained_model_file_path = os.path.join("artifacts", "gender_model.pkl")
-    age_trained_model_file_path = os.path.join("artifacts", "age_model.pkl")
+    gender_trained_model_file_path = os.path.join("artifacts", "gender_model")
+    age_trained_model_file_path = os.path.join("artifacts", "age_model")
 
 class ModelTrainer:
     def __init__(self):
@@ -37,7 +37,6 @@ class ModelTrainer:
             logging.info("Training data fitted for Gender model.")
             gender_acc = gender_model.evaluate(X_gender_test, y_gender_test)[1]
             print("The accuracy for gender model is:\t {}".format(gender_acc))
-            logging.info("Gender model evaluated and accuracy is\t.".format(gender_acc))
             save_model(
                 ModelTrainerConfig.gender_trained_model_file_path,
                 gender_model
@@ -58,7 +57,6 @@ class ModelTrainer:
             logging.info("Training data fitted for Age model.")
             age_acc = age_model.evaluate(X_age_test, y_age_test)[1]
             print("The accuracy for gender model is:\t {}".format(age_acc))
-            logging.info("Age model evlauted and accuracy is\t.".format(age_acc))
             save_model(
                 ModelTrainerConfig.age_trained_model_file_path,
                 age_model
