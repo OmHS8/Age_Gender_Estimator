@@ -1,12 +1,11 @@
 import os
 import sys
-from dataclasses import dataclass
 import tensorflow as tf
-from src.utils import load_model, save_model
+from src.utils import save_model
 from src.exception import CustomException
 from src.logger import logging
+from keras.preprocessing.image import ImageDataGenerator
 
-@dataclass
 class ModelTrainerConfig:
     gender_trained_model_file_path = os.path.join("artifacts", "gender_model")
     age_trained_model_file_path = os.path.join("artifacts", "age_model")
@@ -18,45 +17,37 @@ class ModelTrainer:
     def initiate_model_trainer(self, data_path):
         try:
             logging.info("Splitting data into gender and age model data.")
-            Gender_data = data_path['gender_data']
-            X_gender_train, X_gender_test, y_gender_train, y_gender_test = Gender_data[0], Gender_data[1], Gender_data[2], Gender_data[3]
+            # Gender_data = data_path['gender_data']
+            # X_gender_train, X_gender_test, y_gender_train, y_gender_test = Gender_data[0], Gender_data[1], Gender_data[2], Gender_data[3]
             Age_data = data_path['age_data']
             X_age_train, X_age_test, y_age_train, y_age_test = Age_data[0], Age_data[1], Age_data[2], Age_data[3]
-            gender_model = self.build_models(1, activation='sigmoid', loss='binary_crossentropy')
-            logging.info("Gender model built.")
-            callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=5)
-            gender_history = gender_model.fit(
-                X_gender_train,
-                y_gender_train,
-                validation_split=0.2,
-                batch_size=64,
-                epochs=25,
-                callbacks=[tf.keras.callbacks.ReduceLROnPlateau(), callback],
-                verbose=2
-            )
-            logging.info("Training data fitted for Gender model.")
-            gender_acc = gender_model.evaluate(X_gender_test, y_gender_test)[1]
-            print("The accuracy for gender model is:\t {}".format(gender_acc))
-            save_model(
-                ModelTrainerConfig.gender_trained_model_file_path,
-                gender_model
-            )
-            logging.info("Saved gender model.")
-
-            age_model = self.build_models(7, activation='softmax', loss='sparse_categorical_crossentropy')
+            # gender_train, gender_test = self.get_augmented_data(X_gender_train, X_gender_test, y_gender_train, y_gender_test)
+            # gender_model = self.build_gender_model()
+            # logging.info("Gender model built.")
+            # gender_history = gender_model.fit(
+            #     gender_train,
+            #     validation_data=gender_test,
+            #     epochs=25,
+            #     shuffle=True,
+            #     verbose=1
+            # )
+            # logging.info("Training data fitted for Gender model.")
+            # save_model(
+            #     ModelTrainerConfig.gender_trained_model_file_path,
+            #     gender_model
+            # )
+            # logging.info("Saved gender model.")
+            age_train, age_test = self.get_augmented_data(X_age_train, X_age_test, y_age_train, y_age_test)
+            age_model = self.build_age_model()
             logging.info("Age model built.")
             age_history = age_model.fit(
-                X_age_train,
-                y_age_train,
-                validation_split=0.2,
-                batch_size=64,
-                epochs=50,
-                callbacks=[tf.keras.callbacks.ReduceLROnPlateau(), callback],
-                verbose=2
+                age_train,
+                validation_data=age_test,
+                epochs = 40,
+                shuffle=True,
+                verbose=1
             )
             logging.info("Training data fitted for Age model.")
-            age_acc = age_model.evaluate(X_age_test, y_age_test)[1]
-            print("The accuracy for gender model is:\t {}".format(age_acc))
             save_model(
                 ModelTrainerConfig.age_trained_model_file_path,
                 age_model
@@ -67,30 +58,47 @@ class ModelTrainer:
             logging.info("Custom Exception raised with error:\t.".format(e))
             raise CustomException(e, sys)
 
-    def build_models(self, num_classes, activation='softmax', loss='sparse_categorical_crossentropy'):
-        img_height = 48
-        img_width = 48
-        inputs = tf.keras.Input(shape=(img_height, img_width, 1))
-        x = tf.keras.layers.experimental.preprocessing.Rescaling(1./255)(inputs)
-        x = tf.keras.layers.Conv2D(16, 3, activation='relu')(x)
-        x = tf.keras.layers.AveragePooling2D(pool_size=(2,2))(x)
-        x = tf.keras.layers.Conv2D(32, 3, activation='relu')(x)
-        x = tf.keras.layers.AveragePooling2D(pool_size=(2,2))(x)
-        x = tf.keras.layers.Conv2D(64, 3, activation='relu')(x)
-        x = tf.keras.layers.AveragePooling2D(pool_size=(2,2))(x)
-        x = tf.keras.layers.Conv2D(128, 3, activation='relu')(x)
-        x = tf.keras.layers.AveragePooling2D(pool_size=(2,2))(x)
-        x = tf.keras.layers.GlobalAveragePooling2D()(x)
-        x = tf.keras.layers.Dense(128, activation='relu')(x)
-        x = tf.keras.layers.Dropout(0.15)(x)
-        x = tf.keras.layers.Dense(64, activation='relu')(x)
-        x = tf.keras.layers.Dropout(0.15)(x)
-        x = tf.keras.layers.Dense(32, activation='relu')(x)
-        outputs = tf.keras.layers.Dense(num_classes, activation=activation)(x)
-        model = tf.keras.Model(inputs=inputs, outputs=outputs)
-        model.compile(
-            optimizer = 'adam',
-            loss = loss,
-            metrics = ['accuracy']
-        )
+    def build_age_model(self):
+        agemodel = tf.keras.models.Sequential()
+        agemodel.add(tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(200, 200, 3)))
+        agemodel.add(tf.keras.layers.MaxPooling2D((2,2)))
+        agemodel.add(tf.keras.layers.Conv2D(64, (3,3), activation='relu'))
+        agemodel.add(tf.keras.layers.MaxPooling2D((2,2)))
+        agemodel.add(tf.keras.layers.Conv2D(128, (3,3), activation='relu'))
+        agemodel.add(tf.keras.layers.MaxPooling2D((2,2)))
+        agemodel.add(tf.keras.layers.Flatten())
+        agemodel.add(tf.keras.layers.Dense(64, activation='relu'))
+        agemodel.add(tf.keras.layers.Dropout(0.5))
+        agemodel.add(tf.keras.layers.Dense(1, activation='relu'))
+        agemodel.compile(loss='mean_squared_error',
+                    optimizer='adam')
+        return agemodel
+    
+    def build_gender_model(self):
+        model = tf.keras.models.Sequential()
+        model.add(tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(200, 200, 3)))
+        model.add(tf.keras.layers.MaxPooling2D((2,2)))
+        model.add(tf.keras.layers.Conv2D(64, (3,3), activation='relu'))
+        model.add(tf.keras.layers.MaxPooling2D((2,2)))
+        model.add(tf.keras.layers.Conv2D(128, (3,3), activation='relu'))
+        model.add(tf.keras.layers.MaxPooling2D((2,2)))
+        model.add(tf.keras.layers.Flatten())
+        model.add(tf.keras.layers.Dense(64, activation='relu'))
+        model.add(tf.keras.layers.Dropout(0.5))
+        model.add(tf.keras.layers.Dense(1, activation='sigmoid'))
+        model.compile(loss='binary_crossentropy',
+                    optimizer='adam',
+                    metrics=['accuracy'])
         return model
+    
+    def get_augmented_data(self, x_train, x_test, y_train, y_test ):
+        datagen = ImageDataGenerator(
+            rescale=1./255., width_shift_range = 0.1, height_shift_range = 0.1, horizontal_flip = True
+        )
+        train = datagen.flow(x_train, y_train, batch_size=32)
+        test_datagen = ImageDataGenerator(rescale=1./255)
+        test = test_datagen.flow(x_test, y_test, batch_size=32)
+        return (
+            train,
+            test
+        )

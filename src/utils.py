@@ -26,8 +26,9 @@ def load_model(file_path):
         json_file.close()
         loaded_model = model_from_json(loaded_model_json)
         # load weights into new model
-        loaded_model.load_weights("{}_model.h5".format(file_path))
+        file_path = file_path.split(".")[0]
+        loaded_model.load_weights('{}.h5'.format(file_path))
         return loaded_model
     except Exception as e:
         raise CustomException(e, sys)
-
+    

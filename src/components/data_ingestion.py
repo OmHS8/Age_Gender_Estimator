@@ -5,15 +5,12 @@ from src.components.model_trainer import ModelTrainer
 from src.exception import CustomException
 from src.logger import logging
 import pandas as pd
+from PIL import Image
+import numpy as np
 
-from sklearn.model_selection import train_test_split
-from dataclasses import dataclass
-
-@dataclass
 class DataIngestionConfig:
-    train_data_path: str=os.path.join('artifacts',"train.csv")
-    test_data_path: str=os.path.join('artifacts', "test.csv")
-    raw_data_path: str=os.path.join('artifacts', "data.csv")
+    images_data_path: str=os.path.join('artifacts',"image_data.npy")
+    gender_age_data_path: str=os.path.join('artifacts', "age_gender.csv")
 
 class DataIngestion:
     def __init__(self) -> None:
@@ -22,26 +19,41 @@ class DataIngestion:
     def initiate_data_ingestion(self):
         logging.info("Entered the data ingestion method or component")
         try:
-            df = pd.read_csv(r"notebook\data\age_gender.csv")
-            logging.info("Read the dataset as dataframe")
-
-            os.makedirs(os.path.dirname(self.ingestion_config.train_data_path), exist_ok=True)
-            df.to_csv(self.ingestion_config.raw_data_path, index=False, header=True)
-            logging.info("Train Test split initiated")
-            train_set, test_set = train_test_split(df, test_size=0.2,  random_state=42)
-            train_set.to_csv(self.ingestion_config.train_data_path, index=False, header=True)
-            test_set.to_csv(self.ingestion_config.test_data_path, index=False, header=True)
-            logging.info("Ingestion of data is completed")
+            # images = []
+            # ages = []
+            # genders = []
+            # logging.info("Preparing data for images reading, conversion and their respective age and gender.")
+            # file_path = 'notebook\data\image_data'
+            # for i in os.listdir(file_path):
+            #     split = i.split('_')
+            #     ages.append(int(split[0]))
+            #     genders.append(int(split[1]))
+            #     img = Image.open(file_path + '\\' + i)
+            #     img.resize((200,200), Image.LANCZOS)
+            #     ar = np.asarray(img)
+            #     images.append(ar)
+            #     img.close()
+            # image_arr = np.array(images)
+            # os.makedirs(os.path.dirname(self.ingestion_config.images_data_path),exist_ok=True)
+            # np.save(self.ingestion_config.images_data_path, image_arr)
+            # logging.info("Saved image data.")
+            # ages = pd.Series(list(ages), name = 'Ages')
+            # genders = pd.Series(list(genders), name = 'Genders')
+            # df = pd.concat([ages, genders], axis=1)
+            # df.to_csv(DataIngestionConfig.gender_age_data_path, index=False, header=True)
+            # logging.info("Saved age and gender labels")
+            # logging.info("Ingestion of data is completed")
             return (
-                self.ingestion_config.raw_data_path
+                self.ingestion_config.images_data_path,
+                self.ingestion_config.gender_age_data_path
             )
         except Exception as e:
             raise CustomException(e, sys)
 
 if __name__ == '__main__':
     obj = DataIngestion()
-    data_path = obj.initiate_data_ingestion()
+    image_data_path, labels_path = obj.initiate_data_ingestion()
     data_transformation = DataTransformation()
-    data = data_transformation.initiate_data_transformation(data_path)
+    data = data_transformation.initiate_data_transformation(image_data_path, labels_path)
     model_trainer = ModelTrainer()
     model_trainer.initiate_model_trainer(data)
