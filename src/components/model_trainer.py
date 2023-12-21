@@ -17,26 +17,26 @@ class ModelTrainer:
     def initiate_model_trainer(self, data_path):
         try:
             logging.info("Splitting data into gender and age model data.")
-            # Gender_data = data_path['gender_data']
-            # X_gender_train, X_gender_test, y_gender_train, y_gender_test = Gender_data[0], Gender_data[1], Gender_data[2], Gender_data[3]
+            Gender_data = data_path['gender_data']
+            X_gender_train, X_gender_test, y_gender_train, y_gender_test = Gender_data[0], Gender_data[1], Gender_data[2], Gender_data[3]
             Age_data = data_path['age_data']
             X_age_train, X_age_test, y_age_train, y_age_test = Age_data[0], Age_data[1], Age_data[2], Age_data[3]
-            # gender_train, gender_test = self.get_augmented_data(X_gender_train, X_gender_test, y_gender_train, y_gender_test)
-            # gender_model = self.build_gender_model()
-            # logging.info("Gender model built.")
-            # gender_history = gender_model.fit(
-            #     gender_train,
-            #     validation_data=gender_test,
-            #     epochs=25,
-            #     shuffle=True,
-            #     verbose=1
-            # )
-            # logging.info("Training data fitted for Gender model.")
-            # save_model(
-            #     ModelTrainerConfig.gender_trained_model_file_path,
-            #     gender_model
-            # )
-            # logging.info("Saved gender model.")
+            gender_train, gender_test = self.get_augmented_data(X_gender_train, X_gender_test, y_gender_train, y_gender_test)
+            gender_model = self.build_gender_model()
+            logging.info("Gender model built.")
+            gender_history = gender_model.fit(
+                gender_train,
+                validation_data=gender_test,
+                epochs=25,
+                shuffle=True,
+                verbose=1
+            )
+            logging.info("Training data fitted for Gender model.")
+            save_model(
+                ModelTrainerConfig.gender_trained_model_file_path,
+                gender_model
+            )
+            logging.info("Saved gender model.")
             age_train, age_test = self.get_augmented_data(X_age_train, X_age_test, y_age_train, y_age_test)
             age_model = self.build_age_model()
             logging.info("Age model built.")

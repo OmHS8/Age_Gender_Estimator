@@ -1,5 +1,4 @@
 import sys
-import os
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -16,7 +15,6 @@ class DataTransformation:
             label_data = pd.read_csv(label_path)
             logging.info("Read labels data completed")
             logging.info("Initiating preprocessing on label data")
-            # data['age'] = data['age'].apply(self.group)
             images_data = np.load(image_path)
             ### For complete data
             logging.info("preprocessing of data done")
