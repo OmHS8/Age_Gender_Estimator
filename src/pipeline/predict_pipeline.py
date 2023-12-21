@@ -10,7 +10,7 @@ import numpy as np
 import path
 
 dir = path.Path(__file__).abspath()
-sys.append.path(dir.parent.parent)
+sys.path.append(dir.parent.parent)
 
 class PredictPipeline:
     def __init__(self) -> None:
