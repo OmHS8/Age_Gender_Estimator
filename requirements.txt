@@ -5,4 +5,5 @@ tensorflow
 scikit-learn
 mtcnn
 opencv-python
+path
 -e .
