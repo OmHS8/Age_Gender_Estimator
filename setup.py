@@ -18,13 +18,10 @@ setup(
     version = '0.0.1',
     author = 'Om',
     author_email = 'oms9635@gmail.com',
-    packages = setuptools.find_packages(
-        where='src',
-        where='packages.txt',
-    ),
+    packages = find_packages(),
     package_dir = {
         "" : ".",
-        "" : ".packages.txt"
+        "" : "./packages.txt"
     },
     install_requires = get_requirements('requirements.txt')
 )
