@@ -19,9 +19,5 @@ setup(
     author = 'Om',
     author_email = 'oms9635@gmail.com',
     packages = find_packages(),
-    package_dir = {
-        "" : ".",
-        "" : "./packages.txt"
-    },
     install_requires = get_requirements('requirements.txt')
 )
