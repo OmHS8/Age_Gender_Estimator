@@ -27,8 +27,8 @@ class PredictPipeline:
                 results = 0
                 logging.info("Image contained multiple faces")
             else:
-                gender_model_path = './artifacts/gender_model.json'
-                age_model_path = './artifacts/age_model.json'
+                gender_model_path = './artifacts/gender_model'
+                age_model_path = './artifacts/age_model'
                 logging.info("Initiating prediction process")
                 logging.info("Loading gender model")
                 gender_model = load_model(gender_model_path)
