@@ -21,13 +21,14 @@ def save_model(file_path, model):
 
 def load_model(file_path):
     try:
-        json_file = open(file_path, 'r')
+        model_path = file_path + ".json"
+        json_file = open(model_path, 'r')
         loaded_model_json = json_file.read()
         json_file.close()
         loaded_model = model_from_json(loaded_model_json)
         # load weights into new model
-        file_path = file_path.split(".")[0]
-        loaded_model.load_weights('{}.h5'.format(file_path))
+        weights_path = file_path + ".h5"
+        loaded_model.load_weights(weights_path)
         return loaded_model
     except Exception as e:
         raise CustomException(e, sys)
