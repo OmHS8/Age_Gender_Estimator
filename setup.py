@@ -25,6 +25,6 @@ setup(
     package_dir = {
         "" : ".",
         "" : ".packages.txt"
-    }
+    },
     install_requires = get_requirements('requirements.txt')
 )
