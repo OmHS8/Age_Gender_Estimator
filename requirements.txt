@@ -1,9 +1,10 @@
-pandas 
-numpy
-matplotlib
-tensorflow
-scikit-learn
-mtcnn
-opencv-python
+python==3.11
+pandas==2.1.4
+numpy==1.26.2
+matplotlib==3.8.2
+tensorflow==2.15.0
+scikit-learn==1.3.2
+mtcnn==0.1.0
+opencv-python==4.8.1
 path
 -e .
