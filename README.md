@@ -2,6 +2,9 @@
 
 The Age Classifier is a machine learning model designed to estimate the age and gender of individuals based on input features such as facial images. This project aims to provide a robust and accurate tool for age and gender estimation.
 <br>
+<br>
+It is built using python and it's libraries such as tensorflow, streamlit, etc.
+<br>
 <h2>Features</h2>
 <li>The data used to train the models is taken from UTKfacedataset which can be found on online.</li>
 <li>The image data is preprocessed and trained on a cnn model.</li>
