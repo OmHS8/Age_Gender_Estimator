@@ -10,7 +10,7 @@ It is built using python and it's libraries such as tensorflow, streamlit, etc.
 <li>The image data is preprocessed and trained on a cnn model.</li>
 <li>This project uses two different models for age and gender each the only difference being the output layer and the metrics to evaluate the model accuracy.</li>
 <li>The web-interface is built using streamlit which allows easy and quick building of interfaces using a variety of features available. The interface is simple and intuitive making it user-friendly.</li>
-<li>The project is deployed on streamlit cloud and can be accessed via the link provided.</li>
+<li>The project can deployed via streamlit</li>
 <br>
 <h2>Usage</h2>
 <li>To use the project locally, just clone the repository and install the requirements via "python -m pip install -r requirements.txt".</li>
