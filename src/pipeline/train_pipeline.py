@@ -8,10 +8,10 @@ from src.exception import CustomException
 
 
 class TrainPipeline:
-    def __init__():
+    def __init__(self):
         pass
 
-    def train():
+    def train(self):
         try:
             obj = DataIngestion()
             image_data_path, labels_path = obj.initiate_data_ingestion()
